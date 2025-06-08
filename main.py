@@ -80,7 +80,16 @@ def events_with_no_guests():
         conn.rollback()
 
 def rsvp_summary():
-    rsvp_summary_query = """select rsvp_status,count(rsvp_status) from guests group by rsvp_status;"""
+    rsvp_summary_query = """select 
+                            g.event_id,
+                           event_name,
+                           count(case when rsvp_status ='Accepted' then email end) as "Accepted",
+                           count(case when rsvp_status ='Maybe' then email end) as "Maybe",
+                           count(case when rsvp_status ='Declined' then email end) as "Declined",
+                           count(email) as "Total Guests"
+                           from guests as g join events as e
+                           using (event_id)
+                           group by 1,2;"""
 
     try:
         cursor.execute(rsvp_summary_query)
