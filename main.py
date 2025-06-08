@@ -79,11 +79,11 @@ def events_with_no_guests():
         print(f"Error while fetching data {e}")
         conn.rollback()
 
-def rsvp_counts():
-    rsvp_count_query = """select rsvp_status,count(rsvp_status) from guests group by rsvp_status;"""
+def rsvp_summary():
+    rsvp_summary_query = """select rsvp_status,count(rsvp_status) from guests group by rsvp_status;"""
 
     try:
-        cursor.execute(rsvp_count_query)
+        cursor.execute(rsvp_summary_query)
         rows = cursor.fetchall()
         if rows:
             for row in rows:
@@ -98,7 +98,7 @@ print("Welcome to Rohit Event Management Private Limited")
 print("--------------------------------------------------")
 
 print("What do you want to do?")
-print("1. Add an Event\n2. Add a Guest\n3. Fetch Guest list\n4. Search Guest\n5. Events with NO guests\n6. RSVP counts")
+print("1. Add an Event\n2. Add a Guest\n3. Fetch Guest list\n4. Search Guest\n5. Events with NO guests\n6. RSVP Summary")
 choice = int(input("Enter a choice: "))
 match choice:
     case 1:
@@ -112,4 +112,4 @@ match choice:
     case 5:
         events_with_no_guests()
     case 6:
-        rsvp_counts()
+        rsvp_summary()
