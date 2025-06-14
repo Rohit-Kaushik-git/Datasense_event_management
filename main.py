@@ -3,7 +3,12 @@ from db import conn,cursor
 
 def add_event():
     event_name = input("Enter the name of the Event: ")
-    event_date = datetime.strptime(input("Enter the date of the event (YYYY-MM-DD): "), "%Y-%m-%d")
+    while True:
+        try:
+            event_date = datetime.strptime(input("Enter the date of the event (YYYY-MM-DD): "), "%Y-%m-%d")
+            break
+        except Exception as e:
+            print("Date format is wrong")
     event_location = input("Enter event location: ")
 
     insert_query = """INSERT INTO events(event_name,event_date,location) values (%s,%s,%s);"""
@@ -19,7 +24,14 @@ def add_guest():
     event_id = int(input("Enter the Event ID: "))
     guest_name = input("Enter your name: ")
     guest_email = input("Enter your Email: ")
-    rsvp = input("Enter RSVP: ")
+    while True:
+        rsvp = input("Enter RSVP (Accepted/Rejected/Maybe): ").title()
+        if rsvp not in ("Accepted","Rejected","Maybe"):
+            print("Wrong Selection")
+            continue
+        else:
+            break
+
 
     insert_query = """INSERT INTO guests(event_id,name,email,rsvp_status) values (%s,%s,%s,%s);"""
     try:
@@ -32,14 +44,16 @@ def add_guest():
 
 def fetch_all_guest():
     event_id_fetch = int(input("Enter the Event ID: "))
-    fetch_guest_query = """select * from guests where event_id=%s;"""
+    fetch_guest_query = """select name,email,rsvp_status from guests where event_id=%s;"""
     
     try:
         cursor.execute(fetch_guest_query,(event_id_fetch,))
         rows = cursor.fetchall()
         if rows:
+            print(f" {'Name':<20} {'Email':<30} {'RSVP':<10}")
             for row in rows:
-                print(row)
+                name, email, rsvp = row
+                print(f" {name[:19]:<20} {email[:29]:<30} {rsvp:<10}")
         else:
             print("No Guest has registered for this event")
     except Exception as e:
